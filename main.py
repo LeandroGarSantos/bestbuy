@@ -1,13 +1,26 @@
-from products import Product
+from products import Product, SpecialProduct, NonStockedProduct, LimitedProduct, Promotion, PercentDiscount, SecondHalfPrice, ThirdOneFree
 from store import Store
 
 
 def main():
+    # Apply the promotion for the products call these classes
+    second_half_price = SecondHalfPrice("Second Half price!")
+    third_one_free = ThirdOneFree("Third One Free!")
+    thirty_percent = PercentDiscount("\033[91m30% off!\033[0m", percent=30)
+
     bose = Product("Bose QuietComfort Earbuds", price=250, quantity=400)
     mac = Product("MacBook Air M2", price=1450, quantity=100)
     google = Product("Google Pixel 7", price=500, quantity=250)
+    windows_license = NonStockedProduct("Windows License", price=125)
+    windows_license.set_quantity(None)
+    shipping = LimitedProduct("Shipping", price=10, quantity=250, limited_offer="Free shipping", maximum=1)
 
-    store = Store([bose, mac, google])
+    # Calling the classes of Promotions
+    bose.set_promotion(second_half_price)
+    mac.set_promotion(third_one_free)
+    windows_license.set_promotion(thirty_percent)
+
+    store = Store([bose, mac, google, windows_license, shipping])
 
     while True:
         print("\033[33m1. List all products in store")

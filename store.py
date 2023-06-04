@@ -1,5 +1,5 @@
 from typing import List
-from products import Product
+from products import Product, LimitedProduct, NonStockedProduct, SpecialProduct
 
 
 class Store:
@@ -13,10 +13,13 @@ class Store:
     def remove_product(self, product: Product):
         self.products.remove(product)
 
-    def get_total_quantity(self) -> int:
+    # Now, the get_total_quantity() method checks if the quantity of each
+    # product is finite (that is, not unlimited) before adding it to the total
+    def get_total_quantity(self):
         total_quantity = 0
         for product in self.products:
-            total_quantity += product.get_quantity()
+            if product.quantity != float('inf'): # at this line
+                total_quantity += product.quantity
         return total_quantity
 
     def get_all_products(self) -> List[Product]:
@@ -26,10 +29,20 @@ class Store:
                 active_products.append(product)
         return active_products
 
+# Added one handle the error about MAXIMUM Product
     def order(self, shopping_list: List[tuple]) -> float:
         total_price = 0
         for product, quantity in shopping_list:
             if product in self.products:
-                total_price += product.buy(quantity)
+                try:
+                    total_price += product.buy(quantity)
+                except Exception as e:
+                    if isinstance(product, LimitedProduct):
+                        max_quantity = product.maximum
+                        error_message = f"Quantity exceeds the maximum allowed for this product. Maximum quantity: {max_quantity}"
+                        print(error_message)
+                    else:
+                        print(str(e))
         return total_price
+
 
